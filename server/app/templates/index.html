@@ -1,0 +1,16 @@
+<html>
+<head>
+    <title>Home</title>
+    <link href="{{ url_for('static', path='/styles.css') }}" rel="stylesheet">
+</head>
+<body>
+    <body>
+        <form action="/search" method="GET">
+           address : <input type="text" name="address"><br>
+           count : <input type="number" name="count" value="10"><br>
+           <input type="submit" value="Search">
+        </form>
+     </body>
+    <h1>{{address}} {{count}}</h1>
+</body>
+</html>

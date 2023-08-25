@@ -1,0 +1,29 @@
+version: '3'
+
+services:
+  nginx:
+    restart: always
+    container_name: nginx
+    build:
+      context: .
+      dockerfile: ./nginx/Dockerfile
+    depends_on:
+      - server
+    ports:
+      - 80:80
+
+  server:
+    restart: always
+    container_name: server
+    build:
+      context: ./server/
+      dockerfile: ./Dockerfile
+      args:
+        APP_HOME: "/server"
+    expose:
+      - ${APP_PORT}
+    volumes:
+      - ./server/:/server/
+    environment:
+      - APP_PORT=${APP_PORT}
+    command: make run
