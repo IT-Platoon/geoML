@@ -40,7 +40,6 @@ htmlcov/
 assets/
 nosetests.xml
 coverage.xml
-assets/
 
 # Translations
 *.mo
@@ -113,7 +112,11 @@ pytest-cov-report.xml
 
 # Jupyter notebook checkpoints
 .ipynb_checkpoints
+desktop/notebooks/.ipynb_checkpoints
 
 coverage-report-html/
+
+# models
+desktop/model/base_data.pkl
 
 .idea/
