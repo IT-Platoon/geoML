@@ -18,29 +18,24 @@ def get_app() -> FastAPI:
     """
     Creates application and all dependable objects.
     """
-    description = "My new FastAPI project"
+    description = "Checking the validity of the address"
 
     tags_metadata = [
         {
             "name": "geo_ml",
-            "description": "My new FastAPI project",
+            "description": "Searching of the address",
         },
     ]
 
     application = FastAPI(
-        title="app",
+        title="GeoML",
         description=description,
         docs_url="/swagger",
-        openapi_url="/openapi",
+        openapi_url="/openapi.json",
         version="0.1.0",
         openapi_tags=tags_metadata,
     )
     settings = get_settings()
-    application.mount(
-        "/static",
-        staticfiles.StaticFiles(directory="app/static"),
-        name="static",
-    )
     bind_routes(application, settings)
     application.state.settings = settings
     return application

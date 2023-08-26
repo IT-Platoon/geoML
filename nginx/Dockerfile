@@ -4,4 +4,4 @@ RUN rm -v /etc/nginx/nginx.conf
 ADD ./nginx/nginx.conf /etc/nginx/
 
 RUN mkdir /nginx
-COPY /server/app/static /nginx/static
+COPY /server/app/client /nginx/client

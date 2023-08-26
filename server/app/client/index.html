@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8"/>
+  <title>GeoML</title>
+  <base href="/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link rel="stylesheet" type="text/css" href="style.css"/>
+
+  <meta name="color-scheme" content="dark"/>
+  <link rel="icon" type="image/svg+xml" sizes="any" href="favicon.svg"/>
+  <link rel="mask-icon" type="image/svg+xml" href="favicon.svg" color="#f0fff0"/>
+  <meta name="theme-color" content="#f0fff0"/>
+
+  <script src="script.js" defer></script>
+</head>
+<body>
+
+<main class="main">
+  <h1 class="title">GeoML</h1>
+
+  <label class="count-label">
+    <span class="count-title">
+      Максимальное количество результатов:
+    </span>
+    <input
+      id="count"
+      value="1"
+      min="1"
+      max="10"
+      type="number"
+    />
+  </label>
+
+  <div class="search-block">
+    <input
+      placeholder="Введите адрес"
+      type="search"
+      id="search"
+      list="hints"
+    />
+
+    <datalist id="hints"></datalist>
+
+    <button id="search-button">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="24"
+        height="24"
+        fill="currentColor"
+        class="search-icon"
+        viewBox="0 0 16 16"
+      >
+        <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
+      </svg>
+    </button>
+  </div>
+  <div id="result" class="hidden">
+    <h2 class="result-title">Результат</h2>
+    <ul id="result-list"></ul>
+  </div>
+
+  <noscript>
+    В вашем браузере отключён javascript. Сайт не будет работать корректно!
+  </noscript>
+</main>
+
+</body>
+</html>
