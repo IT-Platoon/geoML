@@ -17,6 +17,7 @@ from desktop.constants import (
     SINGLE_COUNT,
     MODEL_PATH,
     DATA_PATH,
+    BUILDINGS_DB_PATH,
 )
 
 
@@ -121,8 +122,8 @@ def get_report_dataframe(df: pd.DataFrame, columns: list) -> pd.DataFrame:
     return df[columns]
 
 
-def save_dataframe_csv(df: pd.DataFrame,
-                       filename: str = 'test_predictions.csv') -> None:
+def save_id_csv(df: pd.DataFrame,
+                filename: str = 'test_id_predictions.csv') -> None:
     """
     Сохранение фрейма данных в файл с расширением .csv
 
@@ -134,6 +135,32 @@ def save_dataframe_csv(df: pd.DataFrame,
     report = report.rename(columns={
         "predicted": "target_building_id",
     })
+    report.to_csv(path_or_buf=filename, encoding='utf-8', sep=';', index=False)
+
+
+def save_address_csv(base_data: dict,
+                     address: Optional[str] = None,
+                     responses: int = RESPONSE_COUNT,
+                     filename: str = 'test_address_predictions.csv') -> None:
+    """
+    Сохранение фрейма данных в файл с расширением .csv
+
+    :param base_data: Словарь-справочник адресов
+    :param address: Пользовательский ввод адреса
+    :param responses: Количество возможных вариантов
+    :param filename: Название файла сохранения
+    :return: None
+    """
+    buildings_id = find_address(base_data, address, responses=responses)
+    target_id = list(buildings_id['target_building_id'])
+
+    buildings_db = pd.read_csv(BUILDINGS_DB_PATH)
+    short_addresses = [
+        list(buildings_db.loc[buildings_db.id == target]['short_address'])[0]
+        for target in target_id
+    ]
+
+    report = pd.DataFrame({'addresses': short_addresses})
     report.to_csv(path_or_buf=filename, encoding='utf-8', sep=';', index=False)
 
 
@@ -189,7 +216,6 @@ def full_find_address(model_path: str,
     embeddings = encoding(pd.Series(token_string))
 
     result = checker(base_data, embeddings, responses=responses)
-    result = unification(result)
     return result
 
 
@@ -218,8 +244,6 @@ def find_address(base_data: dict,
     embeddings = encoding(pd.Series(token_string))
 
     result = checker(base_data, embeddings, responses=responses)
-    if responses > 1:
-        result = unification(result)
     result['address'] = address
     return result
 
@@ -265,7 +289,8 @@ def start_search_csv(model_path: str) -> pd.DataFrame:
     addresses_counter = 0
     count_addresses = len(valid_addresses)
     for address in valid_addresses:
-        building = find_address(base_data, address, responses=BEST_COUNT)
+        building = find_address(base_data, address, responses=RESPONSE_COUNT)
+        building = unification(building)
         df = pd.concat([df, building], ignore_index=True)
         addresses_counter += 1
         print(f'{addresses_counter}/{count_addresses} адресов пройдено')
@@ -281,11 +306,19 @@ def start_search_csv(model_path: str) -> pd.DataFrame:
     )
     del df
 
-    save_dataframe_csv(results)
+    save_id_csv(results)
 
     return results
 
 
 if __name__ == "__main__":
-    print(f'Результат работы:\n{start_search_csv(MODEL_PATH)}')
+    # print(f'Результат работы:\n{start_search_csv(MODEL_PATH)}')
+    try:
+        with open(MODEL_PATH, 'rb') as f:
+            guide = pickle.load(f)
+        print('Модель загружена')
+    except FileNotFoundError:
+        print(f'Модель не существует')
+        exit(EXIT_CODES[FileNotFoundError])
+    save_address_csv(guide, 'Санкт-Петербург, Яхтеная у. 18-16-4')
     # print(f'Результат работы:\n{find_address(MODEL_PATH)}')
