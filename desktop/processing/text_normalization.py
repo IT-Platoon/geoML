@@ -1,3 +1,4 @@
+"""Модуль преобразования текста"""
 from nltk.tokenize import word_tokenize  # для токенизации по словам
 
 import re
@@ -21,12 +22,12 @@ for word in _stopwords_ru:
 morph = MorphAnalyzer()
 
 
-def lemmatize(doc) -> str:
+def lemmatize(doc: str) -> str:
     """
+    Получение лемм из строки
 
-
-    :param doc:
-    :return:
+    :param doc: Строка для обработки
+    :return: Строка с леммами
     """
     doc = re.sub(PATTERNS, ' ', doc)
     tokens = []
@@ -35,15 +36,13 @@ def lemmatize(doc) -> str:
 
         count = len(token)
         if token and not (count in stopwords_ru and token in stopwords_ru[count]):
-            # TODO Упрощение обработки токена
 
             token = ' ' + token + ' '
 
             token = token.replace(' д ', 'дом').replace(' ул ', 'улица').replace(' г ', 'город')
             token = token.replace('д.', 'дом').replace('ул.', 'улица').replace('г.', 'город')
 
-            token = token.strip()
-            token = token.lower()
+            token = token.strip().lower()
 
             # Убираю индексы
             if token.isdigit() and count == 6:
