@@ -6,6 +6,7 @@ from collections import Counter
 import pandas as pd
 import numpy as np
 from sklearn.metrics.pairwise import cosine_similarity
+from scipy.spatial.distance import euclidean
 
 from desktop.processing.text_normalization import lemmatize
 from desktop.processing.text_analysis import encoding
@@ -17,8 +18,11 @@ from desktop.constants import (
     SINGLE_COUNT,
     MODEL_PATH,
     DATA_PATH,
+    DATA_TEST_PATH,
     BUILDINGS_DB_PATH,
 )
+
+import time
 
 
 def get_similarity_df(base_data: dict,
@@ -38,7 +42,7 @@ def get_similarity_df(base_data: dict,
 
     for target_building_id in base_data.keys():
         for emb in base_data[target_building_id]:
-            similarity = np.dot(embedding, emb) / (np.linalg.norm(embedding) * np.linalg.norm(emb))
+            similarity = euclidean(embedding, emb)
 
             lst_target_building_id.append(target_building_id)
             lst_value.append(similarity)
@@ -74,7 +78,7 @@ def get_similarity_df_one(base_data: dict,
 
     for target_building_id in base_data.keys():
         emb = base_data[target_building_id][0]
-        similarity = np.dot(embedding, emb) / (np.linalg.norm(embedding) * np.linalg.norm(emb))
+        similarity = euclidean(embedding, emb)
 
         lst_target_building_id.append(target_building_id)
         lst_value.append(similarity)
@@ -105,7 +109,7 @@ def checker(base_data: dict,
     df = None
 
     for emb in embeddings:
-        df = get_similarity_df(base_data, emb, responses)
+        df = get_similarity_df_one(base_data, emb, responses)
         break  # Пройдём 1 раз
 
     return df
@@ -241,8 +245,10 @@ def find_address(base_data: dict,
 
     embeddings = encoding(pd.Series(token_string))
 
+    check_time = time.time()
     result = checker(base_data, embeddings, responses=responses)
     result['address'] = address
+    print(f'Время поиска результатов: {time.time() - check_time}')
     return result
 
 
@@ -264,7 +270,7 @@ def start_search_csv(model_path: str) -> pd.DataFrame:
 
     df = pd.DataFrame(columns=['address', 'target_building_id', 'value'])
     valid = pd.read_csv(
-        DATA_PATH,
+        DATA_TEST_PATH,
         sep=';',
         encoding='utf-8',
         encoding_errors='ignore',
@@ -279,9 +285,9 @@ def start_search_csv(model_path: str) -> pd.DataFrame:
 
     # Обрежем данные для упрощения процесса
     valid_id, valid_addresses, valid_target_id = (
-        valid_id[:5],
-        valid_addresses[:5],
-        valid_target_id[:5],
+        valid_id[:1500],
+        valid_addresses[:1500],
+        valid_target_id[:1500],
     )
 
     addresses_counter = 0
@@ -310,13 +316,13 @@ def start_search_csv(model_path: str) -> pd.DataFrame:
 
 
 if __name__ == "__main__":
-    # print(f'Результат работы:\n{start_search_csv(MODEL_PATH)}')
-    try:
+    print(f'Результат работы:\n{start_search_csv(MODEL_PATH)}')
+    """try:
         with open(MODEL_PATH, 'rb') as f:
             guide = pickle.load(f)
         print('Модель загружена')
     except FileNotFoundError:
         print(f'Модель не существует')
         exit(EXIT_CODES[FileNotFoundError])
-    print(get_addresses(guide, 'Санкт-Петербург, Яхтеная у. 18-16-4'))
+    print(get_addresses(guide, 'Санкт-Петербург, Яхтеная у. 18-16-4'))"""
     # print(f'Результат работы:\n{find_address(MODEL_PATH)}')
