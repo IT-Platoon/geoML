@@ -20,7 +20,6 @@ from .constants import (
     BUILDINGS_DB_PATH,
 )
 
-
 def get_similarity_df(base_data: dict,
                       embedding: np.array,
                       k_best: int) -> pd.DataFrame:

@@ -2,7 +2,6 @@ from fastapi import APIRouter, Query, Request, responses, status
 from ..desktop.searcher import get_addresses_clean
 from ..desktop.constants import MODEL_PATH, RESPONSE_COUNT
 
-
 api_router = APIRouter(
     prefix="/search",
     tags=["geo_ml"],

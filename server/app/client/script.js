@@ -4,10 +4,9 @@ const searchButton = document.getElementById('search-button');
 const search = document.getElementById('search');
 const resultWrapper = document.getElementById('result');
 const resultList = document.getElementById('result-list');
-const hints = document.getElementById('hints');
 const countInput = document.getElementById('count');
 
-let resultController, hintsController;
+let resultController;
 
 async function sendRequest(address, count, controller) {
   const response = await fetch(
@@ -18,6 +17,7 @@ async function sendRequest(address, count, controller) {
 }
 
 function createAddressItem(text) {
+  resultWrapper.classList.remove('hidden');
   const item = document.createElement("li");
   item.classList.add('result-item');
   item.appendChild(document.createTextNode(text));
@@ -25,40 +25,14 @@ function createAddressItem(text) {
   resultList.appendChild(item);
 }
 
-search.addEventListener('input', async () => {
-  const {value} = search;
-
-  if(value?.length > 3) {
-    hintsController?.abort();
-    hintsController = new AbortController();
-
-    hints.innerHTML = '';
-
-    const result = await sendRequest(value, 10, hintsController);
-
-    if (result?.result == undefined) {
-      return;
-    }
-
-    for (const value of result.result) {
-      const item = document.createElement("option");
-      item.value = value?.address || '';
-      hints.appendChild(item);
-    }
-  }
-});
-
 searchButton.addEventListener('click', async () => {
   const {value} = search;
 
   if(value?.length > 3) {
-    hintsController?.abort();
     resultController?.abort();
     resultController = new AbortController();
 
-    hints.innerHTML = '';
     resultList.innerHTML = '';
-    resultWrapper.classList.remove('hidden');
 
     let result;
     try {
