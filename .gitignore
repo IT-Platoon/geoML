@@ -119,4 +119,7 @@ coverage-report-html/
 # models
 desktop/model/base_data.pkl
 
+# csv results
+desktop/*.csv
+
 .idea/

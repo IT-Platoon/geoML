@@ -1,12 +1,12 @@
 from fastapi import APIRouter, Query, Request, responses, status
-from ..desktop.searcher import find_address
+from ..desktop.searcher import get_addresses_clean
 from ..desktop.constants import MODEL_PATH, RESPONSE_COUNT
+
 
 api_router = APIRouter(
     prefix="/search",
     tags=["geo_ml"],
 )
-
 
 @api_router.get(
     "",
@@ -17,7 +17,7 @@ async def search(
     address: str = Query(default="", alias="address"),
     count: int = Query(default=RESPONSE_COUNT, alias="count"),
 ):
-    result = find_address(MODEL_PATH, address)
+    result = get_addresses_clean(address, count)
     print(result)
     
     if result is None:
@@ -25,7 +25,5 @@ async def search(
         
     return {
         "query": address,
-        "result": [
-            {"id": i, "address": ''} for i in result['target_building_id']
-        ]
+        "result": result
     }
