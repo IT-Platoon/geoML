@@ -14,4 +14,7 @@ WORKDIR ${APP_HOME}
 
 RUN pip install poetry && \
     poetry config virtualenvs.create false && \
+    poetry add "torch!=2.0.1" && \
+    poetry add huggingface-hub && \
+    poetry add sentence-transformers && \
     poetry install --no-interaction --no-ansi

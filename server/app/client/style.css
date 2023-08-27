@@ -1,7 +1,7 @@
 :root {
   --background: #1f1f1f;
   --foreground: #3b3b3b;
-  --contrast-light: #22ff22;;
+  --contrast-light: white;
   --contrast-dark: black;
 }
 
@@ -30,19 +30,6 @@ body {
 
   background-color: var(--background);
   color: var(--contrast-light);
-  animation: background-blink 3s ease-in-out infinite alternate;
-}
-
-@keyframes background-blink {
-  0% {
-    background-color: #1f1a1f;
-  }
-  0% {
-    background-color: var(--background);
-  }
-  100% {
-    background-color: #1a1f1a;
-  }
 }
 
 ::-webkit-scrollbar {

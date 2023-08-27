@@ -1,7 +1,6 @@
 from fastapi import APIRouter, Query, Request, responses, status
-
-from desktop.searcher import find_address
-from desktop.constants import MODEL_PATH, RESPONSE_COUNT
+from ..desktop.searcher import find_address
+from ..desktop.constants import MODEL_PATH, RESPONSE_COUNT
 
 api_router = APIRouter(
     prefix="/search",
@@ -18,11 +17,15 @@ async def search(
     address: str = Query(default="", alias="address"),
     count: int = Query(default=RESPONSE_COUNT, alias="count"),
 ):
-
+    result = find_address(MODEL_PATH, address)
+    print(result)
+    
+    if result is None:
+        return {}
+        
     return {
         "query": address,
         "result": [
-            {"id": 1, "address": 'г. Санкт-Петербург, ул. Достоевского, д. 44 литера Е'},
-        ] * count
-
+            {"id": i, "address": ''} for i in result['target_building_id']
+        ]
     }
