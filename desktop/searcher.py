@@ -138,30 +138,28 @@ def save_id_csv(df: pd.DataFrame,
     report.to_csv(path_or_buf=filename, encoding='utf-8', sep=';', index=False)
 
 
-def save_address_csv(base_data: dict,
-                     address: Optional[str] = None,
-                     responses: int = RESPONSE_COUNT,
-                     filename: str = 'test_address_predictions.csv') -> None:
+def get_addresses(base_data: dict,
+                  address: Optional[str] = None,
+                  responses: int = RESPONSE_COUNT) -> pd.DataFrame:
     """
     Сохранение фрейма данных в файл с расширением .csv
 
     :param base_data: Словарь-справочник адресов
     :param address: Пользовательский ввод адреса
     :param responses: Количество возможных вариантов
-    :param filename: Название файла сохранения
     :return: None
     """
     buildings_id = find_address(base_data, address, responses=responses)
     target_id = list(buildings_id['target_building_id'])
 
     buildings_db = pd.read_csv(BUILDINGS_DB_PATH)
-    short_addresses = [
-        list(buildings_db.loc[buildings_db.id == target]['short_address'])[0]
+    addresses = [
+        list(buildings_db.loc[buildings_db.id == target]['full_address'])[0]
         for target in target_id
     ]
 
-    report = pd.DataFrame({'addresses': short_addresses})
-    report.to_csv(path_or_buf=filename, encoding='utf-8', sep=';', index=False)
+    report = pd.DataFrame({'target_building_id': target_id, 'target_address': addresses})
+    return report
 
 
 def unification(df: pd.DataFrame,
@@ -320,5 +318,5 @@ if __name__ == "__main__":
     except FileNotFoundError:
         print(f'Модель не существует')
         exit(EXIT_CODES[FileNotFoundError])
-    save_address_csv(guide, 'Санкт-Петербург, Яхтеная у. 18-16-4')
+    print(get_addresses(guide, 'Санкт-Петербург, Яхтеная у. 18-16-4'))
     # print(f'Результат работы:\n{find_address(MODEL_PATH)}')
